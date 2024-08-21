@@ -1,0 +1,20 @@
+{
+	"name": "@hyperupcall/config-utils",
+	"version": "0.1.0",
+	"type": "module",
+	"description": "",
+	"author": "Edwin Kofler <edwin@kofler.dev> (https://edwinkofler.com/)",
+	"license": "MPL-2.0",
+	"main": "index.js",
+	"keywords": [],
+	"scripts": {
+		"format": "prettier --check --ignore-unknown .",
+		"format:fix": "prettier --write --ignore-unknown ."
+	},
+	"devDependencies": {
+		"@hyperupcall/prettier-config": "^0.7.0",
+		"prettier": "^3.3.3",
+		"prettier-plugin-pkg": "^0.18.1"
+	},
+	"prettier": "@hyperupcall/prettier-config"
+}
