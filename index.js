@@ -4,6 +4,13 @@ import fsPromises from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
+/**
+ * @typedef {Object} FindUpOptions
+ * @property {string} [cwd]
+ * @property {string} [type]
+ * @property {string} [stopAt]
+ */
+
 function toPath(urlOrPath) {
 	return urlOrPath instanceof URL ? fileURLToPath(urlOrPath) : urlOrPath
 }
@@ -13,7 +20,7 @@ function isObject(value) {
 }
 
 // Function from https://github.com/sindresorhus/find-up-simple/blob/v1.0.0/index.js.
-export async function findUp(name, { cwd = process.cwd(), type = 'file', stopAt } = {}) {
+export async function findUp(/** @type {string} */ name, /** @type {FindUpOptions} */ { cwd = process.cwd(), type = 'file', stopAt } = {}) {
 	let directory = path.resolve(toPath(cwd) ?? '')
 	const { root } = path.parse(directory)
 	stopAt = path.resolve(directory, toPath(stopAt ?? root))
@@ -35,7 +42,7 @@ export async function findUp(name, { cwd = process.cwd(), type = 'file', stopAt 
 	}
 }
 
-export function findUpSync(name, { cwd = process.cwd(), type = 'file', stopAt } = {}) {
+export function findUpSync(/** @type {string} */ name, /** @type {FindUpOptions} */ { cwd = process.cwd(), type = 'file', stopAt } = {}) {
 	let directory = path.resolve(toPath(cwd) ?? '')
 	const { root } = path.parse(directory)
 	stopAt = path.resolve(directory, toPath(stopAt ?? root))
@@ -58,12 +65,12 @@ export function findUpSync(name, { cwd = process.cwd(), type = 'file', stopAt } 
 }
 
 // Modified function from https://stackoverflow.com/a/34749873.
-export function skipArrayMergeDeep(target, source) {
+export function skipArrayMergeDeep(/** @type {any} */ target, /** @type {any} */ source) {
 	if (isObject(target) && isObject(source)) {
 		for (const key in source) {
 			if (isObject(source[key])) {
 				if (!target[key]) Object.assign(target, { [key]: {} })
-				mergeDeep(target[key], source[key])
+				skipArrayMergeDeep(target[key], source[key])
 			} else {
 				Object.assign(target, { [key]: source[key] })
 			}
