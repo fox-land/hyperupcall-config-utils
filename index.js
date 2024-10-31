@@ -1,4 +1,5 @@
 import process from 'node:process'
+import fs from 'node:fs'
 import fsPromises from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -22,6 +23,28 @@ export async function findUp(name, { cwd = process.cwd(), type = 'file', stopAt 
 
 		try {
 			const stats = await fsPromises.stat(filePath) // eslint-disable-line no-await-in-loop
+			if (
+				(type === 'file' && stats.isFile()) ||
+				(type === 'directory' && stats.isDirectory())
+			) {
+				return filePath
+			}
+		} catch {}
+
+		directory = path.dirname(directory)
+	}
+}
+
+export function findUpSync(name, { cwd = process.cwd(), type = 'file', stopAt } = {}) {
+	let directory = path.resolve(toPath(cwd) ?? '')
+	const { root } = path.parse(directory)
+	stopAt = path.resolve(directory, toPath(stopAt ?? root))
+
+	while (directory && directory !== stopAt && directory !== root) {
+		const filePath = path.isAbsolute(name) ? name : path.join(directory, name)
+
+		try {
+			const stats = fs.statSync(filePath)
 			if (
 				(type === 'file' && stats.isFile()) ||
 				(type === 'directory' && stats.isDirectory())
